@@ -1,260 +1,126 @@
-# 程序设计实践大作业
-## 代码展示
-### 1.00-showcase
-~~~
-#include "openai.hpp"
-#include "nlohmann/json.hpp"
-#include <iostream>
-#include <vector>
+#项目介绍（目前只是一个半成品）
+这是一个和AI进行海龟汤游戏（游戏规则在下方）的项目，通过cmake和qml语言写成，目前还没有实现链接。
+##游戏规则：
+海龟汤游戏是一种推理游戏，其玩法大致如下：出题者：给出一个不完整的故事（汤面），这个故事中通常包含一些难以直接理解的元素或情节。答题者：通过提问问题来试图还原故事的完整内容（汤底）。答题者可以提出类似于“xxx是yyyy吗”之类的问题，而出题者只能回答“是”、“不是”或“与此无关”来提供线索。目标：答题者需要通过不断提问和收集线索，最终揭示出故事的完整内容和背后的真相。
+玩家可以选择当答题者或者出题者，AI则是当对应的角色。
 
-int main() {
-    openai::start("sk-on-Jo5FAGExsug1vrAvXCQ", "", true, "https://agino.me/"); 
-    std::vector<nlohmann::json> previous_messages = {
-        {
-            {"role", "system"},
-            {"content", "你好，我是ChatGPT。请问有什么我可以帮助你的吗？"}
-        }
-    };
-    std::string user_input;
-    bool keep_talking = true;
-    
-    //前置内部对话
-    previous_messages.push_back({{"role", "user"}, {"content", " 海龟汤游戏是一种推理游戏，其玩法大致如下：出题者：给出一个不完整的故事（汤面），这个故事中通常包含一些难以直接理解的元素或情节。答题者：通过提问问题来试图还原故事的完整内容（汤底）。答题者可以提出任何问题，而出题者只能回答“是”、“不是”或“与此无关”来提供线索。目标：答题者需要通过不断提问和收集线索，最终揭示出故事的完整内容和背后的真相。我给你几个经典的海龟汤故事，仅供参考：1.【汤面】某个村子每家每户过了0点必须关灯，于此同时半夜三更都会传来怪叫声，虽然把全村人都吵醒都没有人出去看。真相是什么？【汤底】村中有个人人皆知的变态杀人狂，行迹神秘且有夜盲症，所以全村人都必须要在晚上关灯。由于杀人狂在没有灯的地方找不到人，于是就用怪叫声来吸引村民夜晚开灯并将其杀死。2.【汤面】小梅和老公小王驾车旅游，深夜在一条山路车抛锚了，小王说要走到前面的镇子里去找一位修理工，小梅先留在车里。在车内看不到外面的情况下，夫妻俩约定小王回来时敲三下车门小梅就开门，过了不久，小梅听到了很多次敲门声但从来都不是三下。请推理出故事全貌。【汤底】小王刚走不久就被守株待兔的变态杀人犯杀了，拖着他的尸体回到了车旁边，把他吊在了旁边的树上，当时风很大，小王的头时常会撞到车门再回弹撞很多次。请注意：1.当你是出题者，你提供的是一个不完整的故事（汤面），这个故事中通常包含一些难以直接理解的元素或情节。然后我会向你提出问题，你只能基于刚刚的故事真实回答“是”、“不是”或“与此无关”。2.当我是出题者，我会向你提供一个汤面，然后你每次只能提出一个问题，你提的问题是为了让你自己去还原整个故事，同时，你提的问题我只能回复“是”、“不是”或“与此无关”。所以你的问题应该让我更好回答。如果你实在不知道汤底，可以给我说“请公布汤底”。接下来，我们一起玩海龟汤游戏吧！请你说“我们一起玩海龟汤吧，请问你想当出题者还是答题者”？"}});
-    nlohmann::json request_json = {
-            {"model", "gpt-3.5-turbo"},
-            {"messages", previous_messages},
-            {"max_tokens", 4096},
-            {"temperature", 0.0} 
-        };
-    auto completion = openai::chat().create(request_json);
-    
-    if (completion.contains("choices") && !completion["choices"].empty()) {
-            const nlohmann::json& firstChoice = completion["choices"][0];
-            if (firstChoice.contains("message") && firstChoice["message"].contains("content")) {
-                if (firstChoice["message"]["content"].is_string()) {
-                    std::string content = firstChoice["message"]["content"].get<std::string>();
-                    std::cout << "龟探长回复: " << content << '\n';
-                } else {
-                    std::cout << "The 'content' field is not a string.\n";
-                }
-            } else {
-                std::cout << "The 'message' object or 'content' field does not exist in the first choice.\n";
-            }
-        } else {
-            std::cout << "The 'choices' array is empty or does not exist.\n";
-        }
+#配置问题
+##Qt
+注意！！！Qt creator打开qt文件时请使用6.7.1及以上版本
+打开方式：
+要在 Qt 中打开项目，可以按照以下步骤操作：
+1．在 Qt Creator 中，点击"打开项目"。
+2．导航到 CMake 项目的根目录。
+3．在根目录中，你应该可以找到一个CMakeLists . txt 文件，它是 CMake 项目的主要配置文件。选择这个文件并点击"打开"。
+4.Qt Creator 将会检测到 CMake 项目并加载它。
+5．在左侧的"项目"窗口中，你可以看到项目的源文件、头文件和其他资源。
+6．进行任何必要的配置或修改，比如选择构建目标、设置构建选项等。
+7．点击"构建"按钮，开始构建你的项目。
+8．一旦构建成功，你可以点击"运行"按钮来，打你的项目。
+请注意，为了成功打开 CMake 项目，你需要确保在你的系统上已经安装了 CMake ，并能够在终端或命令提示符中使用 cmake 命令。
 
-    while (keep_talking) {
-        std::cout << "请输入你的问题或对话内容（输入'退出'结束对话）: ";
-        std::getline(std::cin, user_input);
+#代码功能
 
-        if (user_input == "退出") {
-            keep_talking = false;
-            break;
-        }
-        previous_messages.push_back({{"role", "user"}, {"content", user_input}});
-        nlohmann::json request_json = {
-            {"model", "gpt-3.5-turbo"},
-            {"messages", previous_messages},
-            {"max_tokens", 4096},
-            {"temperature", 0.0} 
-        };
+##cmake部分
+### 实现功能
+主要实现了与 OpenAI 进行交互来玩海龟汤游戏的功能。
+ 1. 00-showcase：AI出题，玩家来猜
+ 2. 01-model：玩家出题，AI回答
+### 实现过程
+#### 所用到的库
+ + 模式一
+    1. `"openai.hpp"`：用于与 OpenAI 进行交互。
+    2. `"nlohmann/json.hpp"`：用于处理 JSON 数据。
+    3. `<iostream>`：用于输入输出操作，例如 `std::cout` 和 `std::cin` 。
+    4. `<vector>`：用于使用 `std::vector` 容器来存储消息数据。
+ + 模式二
+    1. `"openai.hpp"`：用于与 OpenAI 进行交互。
+    2. `"nlohmann/json.hpp"`：用于处理 JSON 数据。
+    3. `<iostream>`：用于输入输出操作，例如 `std::cout` 和 `std::cin` 。
+    4. `<vector>`：用于使用 `std::vector` 容器来存储消息数据。
+#### 实现思路
++ 模式一
+    1. 包含必要的头文件和库
+    - 引入了与 OpenAI 交互相关的 `openai.hpp` 、处理 JSON 数据的 `nlohmann/json.hpp` ，以及标准输入输出流 `iostream` 和用于存储数据的 `vector` 库。
+    2. 主函数部分
+    - 首先，使用 `openai::start` 函数启动与 OpenAI 的连接，并传入了 API 密钥、组织 ID 、调试模式标志和 API 端点等参数。
+    - 初始化一个 `std::vector<nlohmann::json>` 类型的变量 `previous_messages` ，用于存储之前的对话消息。初始时包含一个系统消息和一段关于海龟汤游戏规则的用户消息。
+    - 构建一个包含模型名称、之前的消息、最大令牌数和温度等参数的 `nlohmann::json` 对象 `request_json` ，并使用 `openai::chat().create` 函数向 OpenAI 发送请求获取响应。
+    - 对获取的响应进行检查，如果响应中存在有效的选择且第一个选择中包含有效的消息内容，并且内容为字符串类型，就将其输出。否则，打印相应的错误提示信息。
+    3. 循环交互部分
+    - 使用一个 `while` 循环，只要 `keep_talking` 为 `true` ，就持续与用户进行交互。
+    - 提示用户输入问题或对话内容，并在用户输入 "退出" 时结束循环。
+    - 将用户输入添加到 `previous_messages` 中，重新构建 `request_json` 并向 OpenAI 发送请求获取响应。
+    - 再次对新的响应进行与前面相同的检查和处理，并输出结果或错误提示。
+    - 将系统的提示 "好的，请继续..." 添加到 `previous_messages` 中，为下一轮交互做准备。
++ 模式二
+    1. 初始化与配置
+    - 首先调用 `openai::start` 函数来启动与 OpenAI 的连接，并设置相关参数。
+    - 初始化一个 `std::vector<nlohmann::json>` 来存储之前的消息，初始包含了一个系统消息和一段关于海龟汤游戏规则的用户消息。
 
-        auto completion = openai::chat().create(request_json);
+    2. 首次与 OpenAI 交互并处理响应
+    - 构建一个包含模型、消息、最大令牌数和温度等信息的 `nlohmann::json` 对象 `request_json` 。
+    - 使用 `openai::chat().create` 函数向 OpenAI 发送请求并获取响应 `completion` 。
+    - 检查响应中是否存在有效的选择（`choices`）和第一个选择中的有效消息（`message`）以及其内容是否为字符串。如果是，输出内容；否则，打印相应的错误提示。
 
-        if (completion.contains("choices") && !completion["choices"].empty()) {
-            const nlohmann::json& firstChoice = completion["choices"][0];
-            if (firstChoice.contains("message") && firstChoice["message"].contains("content")) {
-                if (firstChoice["message"]["content"].is_string()) {
-                    std::string content = firstChoice["message"]["content"].get<std::string>();
-                    std::cout << "龟探长回复: " << content << '\n';
-                } else {
-                    std::cout << "The 'content' field is not a string.\n";
-                }
-            } else {
-                std::cout << "The 'message' object or 'content' field does not exist in the first choice.\n";
-            }
-        } else {
-            std::cout << "The 'choices' array is empty or does not exist.\n";
-        }
-        previous_messages.push_back({{"role", "system"}, {"content", "好的，请继续..."}}); 
-    }
+    3. 循环交互
+    - 只要 `keep_talking` 为 `true` ，即用户未输入 "退出" ，就持续进行以下操作：
+        - 提示用户输入问题或对话内容，并获取用户输入。
+        - 如果用户输入 "退出" ，则设置 `keep_talking` 为 `false` 以结束循环。
+        - 将用户输入添加到 `previous_messages` 中，重新构建 `request_json` 并向 OpenAI 发送请求获取新的响应。
+        - 像首次交互那样检查新响应的有效性和内容类型，并进行相应的输出或错误提示。
+        - 将系统的提示 "好的，请继续..." 添加到 `previous_messages` 中，为下一轮交互做准备。
 
-    return 0;
-}
-~~~
-### 2.01-model
-~~~
-#include "openai.hpp"
-#include "nlohmann/json.hpp"
-#include <iostream>
-#include <vector>
+## 游戏界面（qt实现）
+### 实现过程
+1. 对于qt我们其实可以说是没有怎么接触过，等搞完代码部分再来搞qt已经时间很紧了。负责这块的同学可以说是用一两天的时间接触了全新的内容，如果有不足部分敬请谅解。
+### 详细介绍
+1. 导入模块
+    - `import QtQuick 2.15` 和 `import QtQuick.Controls 2.15` ：导入了 Qt Quick 基础模块和控件模块，以便使用其中的类型和功能。
 
-int main() {
-    openai::start("sk-on-Jo5FAGExsug1vrAvXCQ", "", true, "https://agino.me/"); 
-    std::vector<nlohmann::json> previous_messages = {
-        {
-            {"role", "system"},
-            {"content", "你好，我是ChatGPT。请问有什么我可以帮助你的吗？"}
-        }
-    };
-    std::string user_input;
-    bool keep_talking = true;
-    
-    //前置内部对话
-    previous_messages.push_back({{"role", "user"}, {"content", "海龟汤游戏是一种推理游戏，其玩法大致如下：出题者：给出一个不完整的故事（汤面），这个故事中通常包含一些难以直接理解的元素或情节。答题者：通过提问问题来试图还原故事的完整内容（汤底）。答题者可以提出任何问题，而出题者只能回答“是”、“不是”或“与此无关”来提供线索。目标：答题者需要通过不断提问和收集线索，最终揭示出故事的完整内容和背后的真相。当我是出题者，我会向你提供一个汤面，然后你每次只能提出一个问题，你提的问题是为了让你自己去还原整个故事，同时，你提的问题我只能回复“是”、“不是”或“与此无关”。所以你的问题应该让我更好回答。如果你实在不知道汤底，可以给我说“请公布汤底”。接下来，我们一起玩海龟汤游戏吧！请你说“我们一起玩海龟汤吧，请给我一个汤面”？"}});
-    nlohmann::json request_json = {
-            {"model", "gpt-3.5-turbo"},
-            {"messages", previous_messages},
-            {"max_tokens", 4096},
-            {"temperature", 0.0} 
-        };
-    auto completion = openai::chat().create(request_json);
-    
-    if (completion.contains("choices") && !completion["choices"].empty()) {
-            const nlohmann::json& firstChoice = completion["choices"][0];
-            if (firstChoice.contains("message") && firstChoice["message"].contains("content")) {
-                if (firstChoice["message"]["content"].is_string()) {
-                    std::string content = firstChoice["message"]["content"].get<std::string>();
-                    std::cout << "【模式二】龟探长回复: " << content << '\n';
-                } else {
-                    std::cout << "The 'content' field is not a string.\n";
-                }
-            } else {
-                std::cout << "The 'message' object or 'content' field does not exist in the first choice.\n";
-            }
-        } else {
-            std::cout << "The 'choices' array is empty or does not exist.\n";
-        }
+2. 主应用窗口
+    - `ApplicationWindow` ：定义了应用的主窗口。
+    - `width` 和 `height` ：设置了窗口的大小为 500x600 像素。
+    - `flags` ：设置了窗口的标志，包括一般窗口类型和固定大小对话框提示。
+    - `visible` ：使窗口可见。
+    - `title` ：设置窗口标题为 "海龟汤游戏" 。
 
-    while (keep_talking) {
-        std::cout << "请输入你的问题或对话内容（输入'退出'结束对话）: ";
-        std::getline(std::cin, user_input);
+3. 夜间/日间模式切换属性
+    - `property bool darkMode: false` ：定义了一个bool类型的属性 `darkMode` ，用于控制夜间/日间模式，初始值为 `false` （日间模式）。
 
-        if (user_input == "退出") {
-            keep_talking = false;
-            break;
-        }
-        previous_messages.push_back({{"role", "user"}, {"content", user_input}});
-        nlohmann::json request_json = {
-            {"model", "gpt-3.5-turbo"},
-            {"messages", previous_messages},
-            {"max_tokens", 4096},
-            {"temperature", 0.0} 
-        };
+4. 主页组件（`Rectangle` ）
+    - 定义了一个矩形作为主页。
+    - 包含了一个显示游戏名称的 `Text` 组件，并设置了字体样式、颜色和位置。
+    - 包含多个 `Button` 组件，分别对应 "游戏规则"、"开始游戏"、"制作游戏成员名单" 和 "退出游戏" 选项。每个按钮都设置了大小、颜色、文本、位置和点击事件。点击事件用于在 `StackView` 中切换页面。
 
-        auto completion = openai::chat().create(request_json);
+5. 游戏规则页面组件（`Component` ）
+    - 定义了游戏规则页面的组件。
+    - 包含一个矩形和其中的文本，用于显示游戏规则的详细说明。
+    - 包含一个 "返回" 按钮，用于返回到主页。
 
-        if (completion.contains("choices") && !completion["choices"].empty()) {
-            const nlohmann::json& firstChoice = completion["choices"][0];
-            if (firstChoice.contains("message") && firstChoice["message"].contains("content")) {
-                if (firstChoice["message"]["content"].is_string()) {
-                    std::string content = firstChoice["message"]["content"].get<std::string>();
-                    std::cout << "【模式二】龟探长回复: " << content << '\n';
-                } else {
-                    std::cout << "The 'content' field is not a string.\n";
-                }
-            } else {
-                std::cout << "The 'message' object or 'content' field does not exist in the first choice.\n";
-            }
-        } else {
-            std::cout << "The 'choices' array is empty or does not exist.\n";
-        }
-        previous_messages.push_back({{"role", "system"}, {"content", "好的，请继续..."}}); 
-    }
+6. 开始游戏页面组件（`Component` ）
+    - 定义了开始游戏页面的组件。
+    - 包含一个矩形和其中的文本，显示 "选择模式" 。
+    - 包含三个模式选择按钮："模式 1"、"模式 2" 和 "敬请期待" 。
+    - 包含一个 "返回" 按钮，用于返回到主页。
 
-    return 0;
-}
-~~~
-### 02-completion
-~~~
-#include "openai.hpp"
-#include "nlohmann/json.hpp"
-#include <iostream>
-#include <vector>
+7. 制作游戏成员名单页面组件（`Component` ）
+    - 定义了制作游戏成员名单页面的组件。
+    - 包含一个矩形和其中的文本，显示成员名单。
+    - 包含一个 "返回" 按钮，用于返回到主页。
 
-int main() {
-    openai::start("sk-on-Jo5FAGExsug1vrAvXCQ", "", true, "https://agino.me/"); 
-    std::vector<nlohmann::json> previous_messages = {
-        {
-            {"role", "system"},
-            {"content", "你好，我是ChatGPT。请问有什么我可以帮助你的吗？"}
-        }
-    };
-    std::string user_input;
-    bool keep_talking = true;
-    
-    //前置内部对话
-    previous_messages.push_back({{"role", "user"}, {"content", "模拟人生游戏规则： 你要自己创建一个具有特定性格和背景的角色，让玩家与之进行互动。 就像是模拟人生，在每一次问答，就是模拟这个人物角色每一个人生阶段，你需要给出不同的选择，而玩家的不同选择会导致最后的人生走向不同。请你创建这样一个角色吧！当玩家说“结束模拟人生”，你需要给出玩家这个角色这一生的经历与结果。"}});
-    nlohmann::json request_json = {
-            {"model", "gpt-3.5-turbo"},
-            {"messages", previous_messages},
-            {"max_tokens", 4096},
-            {"temperature", 0.0} 
-        };
-    auto completion = openai::chat().create(request_json);
-    
-    if (completion.contains("choices") && !completion["choices"].empty()) {
-            const nlohmann::json& firstChoice = completion["choices"][0];
-            if (firstChoice.contains("message") && firstChoice["message"].contains("content")) {
-                if (firstChoice["message"]["content"].is_string()) {
-                    std::string content = firstChoice["message"]["content"].get<std::string>();
-                    std::cout << "角色扮演机器人回复: " << content << '\n';
-                } else {
-                    std::cout << "The 'content' field is not a string.\n";
-                }
-            } else {
-                std::cout << "The 'message' object or 'content' field does not exist in the first choice.\n";
-            }
-        } else {
-            std::cout << "The 'choices' array is empty or does not exist.\n";
-        }
+8. 模式 1 页面组件（`Component` ）
+    - 包含一个矩形，其中有一个列布局。
+    - 包含一个 `ListView` 用于显示聊天消息。
+    - 包含一个行布局，其中有输入消息的 `TextField` 和 "发送" 按钮。
+    - 包含一个 "返回" 按钮，用于返回到上一页。
 
-    while (keep_talking) {
-        std::cout << "请输入你的问题或对话内容（输入'退出'结束对话）: ";
-        std::getline(std::cin, user_input);
+9. 模式 2 页面组件（`Component` ）
+    - 包含一个矩形和其中的文本，显示模式 2 的标题。
+    - 包含一个 "返回" 按钮，用于返回到上一页。
 
-        if (user_input == "退出") {
-            keep_talking = false;
-            break;
-        }
-        previous_messages.push_back({{"role", "user"}, {"content", user_input}});
-        nlohmann::json request_json = {
-            {"model", "gpt-3.5-turbo"},
-            {"messages", previous_messages},
-            {"max_tokens", 4096},
-            {"temperature", 0.0} 
-        };
+10. 页面切换管理（`StackView` ）
+    - `StackView` 用于管理页面的切换，初始显示主页。
 
-        auto completion = openai::chat().create(request_json);
-
-        if (completion.contains("choices") && !completion["choices"].empty()) {
-            const nlohmann::json& firstChoice = completion["choices"][0];
-            if (firstChoice.contains("message") && firstChoice["message"].contains("content")) {
-                if (firstChoice["message"]["content"].is_string()) {
-                    std::string content = firstChoice["message"]["content"].get<std::string>();
-                    std::cout << "角色扮演机器人回复: " << content << '\n';
-                } else {
-                    std::cout << "The 'content' field is not a string.\n";
-                }
-            } else {
-                std::cout << "The 'message' object or 'content' field does not exist in the first choice.\n";
-            }
-        } else {
-            std::cout << "The 'choices' array is empty or does not exist.\n";
-        }
-        previous_messages.push_back({{"role", "system"}, {"content", "好的，请继续..."}}); 
-    }
-
-    return 0;
-}
-~~~
-
-# 主要代码分析
-![](0.1.png)
-## 初始化历史消息，创建一个previous_messages向量，用于与ChatGPT对话。并声明用户输入的字符串和一个布尔变量，用于控制对话循环。
-![](0.2.png)
-## 向AI发送请求并获取响应然后当包含选择且不为空时获取第一个选择并且提取并打印他。
-![](0.3.png) ![](0.4.png)
-## 实现对话循环。将用户输入添加到previous-messages中，并创建新的请求JSON对象，然后发送请求并处理响应，显示模型的回复。
-
+11. 夜间/日间模式切换按钮（`Button` ）
+    - 一个按钮用于切换 `darkMode` 属性的值，从而改变页面的颜色主题。
